@@ -1,0 +1,35 @@
+%% switching stats 02_21_16 by shay
+
+%using pokeHistory which is a  n by 3 matrix where the first column is
+%time, the second is which port was poked, and third is the port the
+%reward was delivered to. If no reward, this entry is zero. 
+
+%run pokeStats first.
+centerPort = 1;
+rightPort = 2;
+leftPort = 3;
+rightProb = 0.2;
+leftProb = 0.8;
+
+timevecs = datevec(pokeHistory(:,1));
+timenums = datenum(pokeHistory(:,1));
+timediffs = etime(timevecs(2:end,:),timevecs(1:end-1,:));
+trialBool = zeros(size(pokeHistory,1),1);
+trials = zeros(1,3);
+
+
+%% extract all the trials to be analyzed
+k = 1;
+for i = 2:size(pokeHistory,1)
+    if pokeHistory(i-1,2) == 1 && (timediffs(i-1) < 1)
+        trials(k,:) = pokeHistory(i,:);
+        k = k+1;
+    end
+end
+
+numCenterPokes = sum(trials(:,2) == centerPort);
+numRightPokes = sum(trials(:,2) == rightPort);
+numLeftPokes = sum(trials(:,2) == leftPort);
+
+
+
