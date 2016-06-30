@@ -12,7 +12,7 @@
 
 %% Required parameters for simulation
 NumSims = 1000;
-iti = 2;
+iti = 1;
 rewardWindow = 3;
 numPokes = length(timePoked);
 sessionTime = timePoked(end);

@@ -1,0 +1,8 @@
+% Behavior Analysis Pipeline
+
+%% Load in the data (speficially the stats data structure)
+[fileName,pathName] = uigetfile('MultiSelect',';
+cd(pathName);
+load(fileName);
+
+%%

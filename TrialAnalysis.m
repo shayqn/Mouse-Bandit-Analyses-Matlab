@@ -5,8 +5,8 @@
 
 %Parameters:
 rewardWindow = 3; % in seconds
-iti = 2; % in seconds
-blockRange = 10; % num of rewards needed to switch blocks
+iti = 1; % in seconds
+blockRange = 10; % num of rewards needed to switch blocks %This is going to be a problem.
 maxProb = 1; %probability we are switching between. 
 
 

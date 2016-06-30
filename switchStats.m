@@ -7,8 +7,8 @@
 %run pokeStats first.
 rewardPort = 2;
 nonrewardPort = 3;
-timevecs = datevec(pokeHistory(:,1));
-timenums = datenum(pokeHistory(:,1));
+timevecs = datevec(pokeHistory.timeStamp(:,1));
+timenums = datenum(pokeHistory.timeStamp(:,1));
 timediffs = etime(timevecs(2:end,:),timevecs(1:end-1,:));
 trialBool = zeros(size(pokeHistory,1),1);
 trials = zeros(1,3);
