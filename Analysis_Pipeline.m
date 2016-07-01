@@ -7,13 +7,6 @@ for i = 1:length(fileName)
     load(fileName{i});
 end
 
-%% Extracting Trials
-ExtractingTrials_v1
-
-%% Poke Analysis
-pokeAnalysis_v1
-
-%% Z score calculator
-RandomPokeZScoreCalculator
-
-%%
+%% Extract Trials and plot
+trials = extractTrials(stats,pokeHistory);
+plotTrials(trials);
