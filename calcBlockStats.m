@@ -1,0 +1,111 @@
+function [ blockStats ] = calcBlockStats(trials)
+%CALCBLOCKSTATS
+% blockStats = calcBlockStats(trials)
+% Inputs: trials (as calculated by extractTrials)
+% Outputs: blockStats is a # of blocks by 4 matrix where:
+    %col1 = start point in terms of trials (duration)
+    %col2 = blockID (left (2) or right (1))
+    %col3 = Mouse's accuracy within the block
+    %col4 = Number of trials it takes the mouse to get the first reward
+    %col5 = Number of errors committed after first reward
+
+numTrials = size(trials,1); %usefull to have around.
+
+%% Calculate total number of left and right rewards
+%Creates a logic vector for when the correct port was the left one
+leftTrialIndices = (trials(:,2) == 2);
+%Creates a logic vector for when the correct port was the right one
+rightTrialIndices = (trials(:,2) == 1);
+%adds up the number of times the mouse received a reward from the left port
+leftPortRewards = sum(trials(leftTrialIndices,4));
+%adds up the number of times the mouse received a reward from the right port
+rightPortRewards = sum(trials(rightTrialIndices,4));
+%% Calculate blocks (BlockID)
+%initializes matrix
+blockID = zeros(numTrials,1);
+%initializes matrix with all of the ports chosen
+portIndex = trials(:,2);
+%initilizes matrix with the probability of the port chosen
+probIndex = trials(:,3);
+
+%iterates over the number of trials performed during this session
+for i = 1:numTrials
+    %if the probability was greater than 0.5, the mouse guessed correctly
+    %and the blockID is set as the port chosen
+    %otherwise the blockID is set as the port not chosen
+    if (probIndex(i) > 0.5)
+        blockID(i) = portIndex(i);
+        
+    else
+        if portIndex(i) == 1
+            blockID(i) = 2;
+        else
+            blockID(i) = 1;
+        end
+    end
+end
+
+%% ratio of correct for right blocks vs. left blocks
+%calculates the total number of times the left and right ports were set as
+%the correct one throughout the duration of the session respectively
+
+%% Create an array of average accuracy for each block
+%finds where the blocks changed and matches them up with the trial numbers
+blockStarts = find(diff(blockID)) + 1;
+%add 1 because the first block start was the first trial, which was not included in the line above
+blockStarts = [1;blockStarts];
+numBlocks = length(blockStarts);
+
+%% Create an array with the accuracy per block,num errors to first reward, num errors after first reward for left/right
+
+%blockStats will be a matrix of size # blocks by 4 where:
+%col1 = blockID (left (2) or right (1))
+%col2 = Mouse's accuracy within the block
+%col3 = Number of trials it takes the mouse to get the first reward
+%col4 = Number of errors committed after first reward
+blockStats = zeros(length(blockStarts), 4); %initialize matrix
+
+%COL2: fill first col with blockIDs
+blockStats(:,2) = blockID(blockStarts);
+
+for i = 1:numBlocks
+    %COL3: fills the second column with block accuracy
+    %%determining the beginning, end, and duration of the block
+    blockBegins = blockStarts(i);
+    
+    %deal with when i == numBlocks, there is i+1.
+    if i == numBlocks
+        blockEnds = numTrials;
+    else
+        blockEnds = blockStarts(i + 1) - 1;
+    end
+    
+    blockDuration = blockBegins:blockEnds;
+    blockRewards = sum(trials(blockDuration, 4));
+    blockAccuracy = blockRewards / length(blockDuration);
+  
+    %Adds the accuracy over the course of each block to the matrix
+    blockStats(i,3) = blockAccuracy;
+    %COL1: fills the first column with the range of the block
+    %first col will be the range of trials in this block [start,end]
+    blockStats(i,1) = blockBegins;
+    
+    
+    %COL4: fills the third column with num of trials before reward
+    firstReward = find(trials(blockDuration, 4) == 1, 1);
+    %Adds the instance of the first reward over the course of each block to
+    %the matrix
+    blockStats(i,4) = firstReward;
+    
+    
+    %COL5: fills the fourth column with the num of incorrect trials after
+    %the first reward
+    durationPostFirst = (blockBegins + firstReward + 1):blockEnds;
+    incorrectTrialsPostFirst = sum(trials(durationPostFirst,4) == 0);
+    %Adds the number of incorrect trials over the course of the block to
+    %the matrix
+    blockStats(i,5) = incorrectTrialsPostFirst;
+end
+
+end
+
