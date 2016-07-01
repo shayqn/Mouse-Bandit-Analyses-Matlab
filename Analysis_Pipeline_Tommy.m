@@ -1,7 +1,8 @@
 % Behavior Analysis Pipeline
 
-%% Load in the data (speficially the stats data structure)
+%% Load in the data (specifically the stats data structure)
 [fileName,pathName] = uigetfile('MultiSelect','on');
+
 cd(pathName);
 for i = 1:length(fileName)
     load(fileName{i});
@@ -16,4 +17,4 @@ pokeAnalysis_v1
 %% Z score calculator
 RandomPokeZScoreCalculator
 
-%%
+%% 
