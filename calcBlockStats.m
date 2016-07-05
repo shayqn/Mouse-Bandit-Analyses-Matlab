@@ -95,7 +95,14 @@ for i = 1:numBlocks
     firstReward = find(trials(blockDuration, 4) == 1, 1);
     %Adds the instance of the first reward over the course of each block to
     %the matrix
-    blockStats(i,4) = firstReward;
+    %Shay - added a conditional statement to handle the case where there
+    %were no rewards awarded in the block (this happens, for example, if
+    %the last block was only a couple trials long).
+    if isempty(firstReward)
+        blockStats(i,4) = nan;
+    else
+        blockStats(i,4) = firstReward;
+    end
     
     
     %COL5: fills the fourth column with the num of incorrect trials after
