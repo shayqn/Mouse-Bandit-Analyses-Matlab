@@ -12,3 +12,4 @@ trials = extractTrials(stats,pokeHistory);
 
 %% calculate block stats
 blockStats = calcBlockStats(trials);
+sessionStats = calcSession(blockStats);
