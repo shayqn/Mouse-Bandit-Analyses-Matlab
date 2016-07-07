@@ -7,7 +7,7 @@ function [ sessionStats ] = calcSessionStats( blockStats )
 % row3 = average block accuracy 
 % row4 = standard deviation of the block accuracy
 % row5 = average number of errors before the first reward of each block
-% row6 = standard deviation of the erros before the first reward of each block
+% row6 = standard deviation of the errors before the first reward of each block
 % row7 = average number of errors after the first reward of each block
 % row8 = standard deviation of errors after the first reward of each block
 
