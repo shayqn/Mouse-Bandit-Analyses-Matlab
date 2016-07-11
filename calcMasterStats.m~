@@ -73,7 +73,9 @@ for currFolder = 1:numFiles
             blockStats = calcBlockStats(trials);
             %calculates the sessionStats of the blockStats
             sessionStats = calcSessionStats(blockStats);
-            %sets the 
+            %stores all of the information of sessionStats into the
+            %variables that will be used as properties of the struct to be
+            %returned
             masterRewards(folInd) = sessionStats(1);
             masterBlocks(folInd) = sessionStats(2);
             masterBlockAccuracy(1,folInd) = sessionStats(3);
@@ -84,11 +86,12 @@ for currFolder = 1:numFiles
             masterErrorsPostFirst(2,folInd) = sessionStats(8);
             folInd = folInd+1;
         end
+        %resets the directory to the one inputted by the user
         cd(mouseDir);
     end
     
 end
-
+%sets all of the properties equal to the variables created previously
 masterMouse = struct;
 masterMouse.name = mouseName;
 masterMouse.dates = masterDates;
