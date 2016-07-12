@@ -9,6 +9,10 @@ function [ blockStats ] = calcBlockStats(trials)
     %col4 = Number of trials it takes the mouse to get the first reward
     %col5 = Number of errors committed after first reward
     %col6 = Number of rewards in each block
+%NOTE:Deletes the last block of the session if there is more than one block
+    %because, since the session can end at any time, the metrics of the last
+    %block don't accurately reflect to the mouse's accurate behavior
+
 
 numTrials = size(trials,1); %usefull to have around.
 
@@ -125,6 +129,14 @@ for i = 1:numBlocks
     
     %&COL6: fills the sixth column witht he num of rewards in each block
     blockStats(i,6) = blockRewards;
+    
+    %Deletes the last block of the session if there is more than one block
+    %because, since the session can end at any time, the metrics of the last
+    %block don't accurately reflect to the mouse's accurate behavior
+    if numBlocks>1
+        blockStats = blockStats(1:numBlocks-1,:);
+    end
+    
    
 end
 
