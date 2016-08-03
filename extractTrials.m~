@@ -7,13 +7,8 @@ function trials = extractTrials(stats,pokeHistory)
 % information: 
     % 1: time
     % 2: port (1 = right, 2 = left)
-    % 3: right port reward probability
-    % 4: left port reward probability
-    % 5: reward given (1 / 0)
-%Note: extractTrials was changed on 08/03/16 to include the probabilities
-%of both ports for each trial. Previously there was only 4 columns, with
-%the 3rd being the reward probability of the port poked and the 4th the
-%reward boolean. 
+    % 3: port reward probability
+    % 4: reward given (1 / 0)
 
 % create a vector 'timePoked' where each entry represents a poke, and the
 % value is the number of seconds since the first poke. This is also
@@ -47,8 +42,8 @@ allTrialIndices = sort([leftTrialIndices,rightTrialIndices]);
 %following:
     % 1: time
     % 2: port (1 = right, 2 = left)
-    % 3: right port reward probability
-    % 4: left port reward probability
+    % 3: left port reward probability
+    % 4: right port reward probability
     % 5: reward given (1 / 0)
 trials = zeros(numTrials,4);
 
@@ -65,15 +60,20 @@ trials(:,2) = righttrials' + (lefttrials.*2)';
 
 %all trials
 allTrialPokes = pokeHistory(allTrialIndices);
+allTrialprob = zeros(numTrials,2);
 
 for i = 1:numTrials
-    trials(i,4) = allTrialPokes(i).rightPortStats.prob;
-    trials(i,5) = allTrialPokes(i).leftPortStats.prob;
+    trials(i,3) = allTrialPokes(i).rightPortStats.prob;
+    trials(i,2) = allTrialPokes(i).leftPortStats.prob;
 end
+
+% now add them to the trials matrix
+trials(righttrials,3) = righttrialprob;
+trials(lefttrials,3) = lefttrialprob;
 
 %finally, the rewards:
 leftrewards = stats.rewards.left(leftTrialIndices);
 rightrewards = stats.rewards.right(rightTrialIndices);
 
-trials(righttrials,3) = rightrewards;
-trials(lefttrials,3) = leftrewards;
+trials(righttrials,4) = rightrewards;
+trials(lefttrials,4) = leftrewards;
