@@ -7,15 +7,15 @@ function masterMouse = calcMasterStats(mouseName, mouseDir)
 % masterMouse.rewards = a vector of the number of rewards of each session
 % masterMouse.numBlocks = a vector of the number of blocks in each session
 % masterMouse.blockAccuracy = a 2xnumSessions matrix where the first row is
-% the average block accuracy for each session and the second row is the 
+% the average block accuracy for each session and the second row is the
 % standard deviation of the block accuracy for each session
 % masterMouse.errorsPreFirstReward = a 2xnumSessions matrix where the first
-% row is the average number of errors before the first reward for each 
-% block of each session and the second row is the standard deviation of 
+% row is the average number of errors before the first reward for each
+% block of each session and the second row is the standard deviation of
 % number of errors before the first reward for each block of each session
-% masterMouse.errorsPostFirstReward = a 2xnumSessions matrix where the 
-% first row is the average number of errors after the first reward for each 
-% block of each session and the second row is the standard deviation of 
+% masterMouse.errorsPostFirstReward = a 2xnumSessions matrix where the
+% first row is the average number of errors after the first reward for each
+% block of each session and the second row is the standard deviation of
 % number of errors after the first reward for each block of each session
 
 %sets dataDir as the directory where the function will be looked as
@@ -54,40 +54,46 @@ for currFolder = 1:numFiles
         %change directory to the next 'j' file
         cd(currFileName);
         %change directory to the mouse selected by the user at that date
-        cd(mouseName);
-        %sets matFiles as all the files of type '.mat' in the directory
-        %(stats and pokeHistory)
-        matFiles = dir('*.mat');
-        %if the directory has this type of '.mat' file(s) the function will
-        %execute the following code
-        if size(matFiles,1) ~= 0
-            %sets the date of the session
-            date = currFileName(2:9);
-            masterDates{folInd} = date;
-            %loads the stats and pokeHistory
-            load(matFiles(1).name);
-            load(matFiles(2).name);
-            %extracts from the stats and pokeHistory
-            trials = extractTrials(stats,pokeHistory);
-            %calculates the blockStats of the trials
-            blockStats = calcBlockStats(trials);
-            %calculates the sessionStats of the blockStats
-            sessionStats = calcSessionStats(blockStats);
-            %stores all of the information of sessionStats into the
-            %variables that will be used as properties of the struct to be
-            %returned
-            masterRewards(folInd) = sessionStats(1);
-            masterBlocks(folInd) = sessionStats(2);
-            masterBlockAccuracy(1,folInd) = sessionStats(3);
-            masterBlockAccuracy(2,folInd) = sessionStats(4);
-            masterErrorsPreFirst(1,folInd) = sessionStats(5);
-            masterErrorsPreFirst(2,folInd) = sessionStats(6);
-            masterErrorsPostFirst(1,folInd) = sessionStats(7);
-            masterErrorsPostFirst(2,folInd) = sessionStats(8);
-            folInd = folInd+1;
-        end
-        %resets the directory to the one inputted by the user
-        cd(mouseDir);
+        if exist(mouseName,'file')
+            cd(mouseName);
+            %sets matFiles as all the files of type '.mat' in the directory
+            %(stats and pokeHistory)
+            matFiles = dir('*.mat');
+            %if the directory has this type of '.mat' file(s) the function will
+            %execute the following code
+            if size(matFiles,1) ~= 0
+                %sets the date of the session
+                date = currFileName(2:9);
+                masterDates{folInd} = date;
+                %load all mat files
+                for i = 1:size(matFiles,1)
+                    load(matFiles(i).name);
+                end
+                if exist('trials') == 0
+                    %extracts from the stats and pokeHistory
+                    trials = extractTrials(stats,pokeHistory);
+                end
+                %calculates the blockStats of the trials
+                blockStats = calcBlockStats(trials);
+                %calculates the sessionStats of the blockStats
+                sessionStats = calcSessionStats(blockStats);
+                %stores all of the information of sessionStats into the
+                %variables that will be used as properties of the struct to be
+                %returned
+                masterRewards(folInd) = sessionStats(1);
+                masterBlocks(folInd) = sessionStats(2);
+                masterBlockAccuracy(1,folInd) = sessionStats(3);
+                masterBlockAccuracy(2,folInd) = sessionStats(4);
+                masterErrorsPreFirst(1,folInd) = sessionStats(5);
+                masterErrorsPreFirst(2,folInd) = sessionStats(6);
+                masterErrorsPostFirst(1,folInd) = sessionStats(7);
+                masterErrorsPostFirst(2,folInd) = sessionStats(8);
+                folInd = folInd+1;
+            end
+       end
+            %resets the directory to the one inputted by the user
+            cd(mouseDir);
+            clear stats pokeHistory
     end
     
 end
