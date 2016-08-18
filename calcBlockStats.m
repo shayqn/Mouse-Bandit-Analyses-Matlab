@@ -6,7 +6,7 @@ function [ blockStats ] = calcBlockStats(trials)
     %col1 = start point in terms of trials (duration)
     %col2 = blockID (left (2) or right (1))
     %col3 = Mouse's accuracy within the block
-    %col4 = Number of trials it takes the mouse to get the first reward
+    %col4 = Number of errors committed before the first reward
     %col5 = Number of errors committed after first reward
     %col6 = Number of rewards in each block
 %NOTE:Deletes the last block of the session if there is more than one block
@@ -22,32 +22,26 @@ leftTrialIndices = (trials(:,2) == 2);
 %Creates a logic vector for when the correct port was the right one
 rightTrialIndices = (trials(:,2) == 1);
 %adds up the number of times the mouse received a reward from the left port
-leftPortRewards = sum(trials(leftTrialIndices,4));
+leftPortRewards = sum(trials(leftTrialIndices,5));
 %adds up the number of times the mouse received a reward from the right port
-rightPortRewards = sum(trials(rightTrialIndices,4));
+rightPortRewards = sum(trials(rightTrialIndices,5));
 %% Calculate blocks (BlockID)
 %initializes matrix
 blockID = zeros(numTrials,1);
 %initializes matrix with all of the ports chosen
 portIndex = trials(:,2);
 %initilizes matrix with the probability of the port chosen
-probIndex = trials(:,3);
+probIndex = zeros(numTrials,1);
+probIndex(rightTrialIndices) = trials(rightTrialIndices,3);
+probIndex(leftTrialIndices) = trials(leftTrialIndices,4);
 
 %iterates over the number of trials performed during this session
 for i = 1:numTrials
-    %if the probability was greater than 0.5, the mouse guessed correctly
-    %and the blockID is set as the port chosen
-    %otherwise the blockID is set as the port not chosen
-    if (probIndex(i) > 0.5)
-        blockID(i) = portIndex(i);
-        
+    if trials(i,3) > trials(i,4)
+        blockID(i) = 1;
     else
-        if portIndex(i) == 1
-            blockID(i) = 2;
-        else
-            blockID(i) = 1;
-        end
-    end
+        blockID(i) = 2;
+    end     
 end
 
 %% ratio of correct for right blocks vs. left blocks
@@ -89,7 +83,7 @@ for i = 1:numBlocks
     end
     
     blockDuration = blockBegins:blockEnds;
-    blockRewards = sum(trials(blockDuration, 4));
+    blockRewards = sum(trials(blockDuration, 5));
     %blockAccuracy = the number of times the mouse chose the right port /
     %the duration of the block
     accuracyMatrix = (blockID(blockDuration) == trials(blockDuration,2));
@@ -103,8 +97,8 @@ for i = 1:numBlocks
     
     
     
-    %COL4: fills the third column with num of trials before reward
-    firstReward = find(trials(blockDuration, 4) == 1, 1);
+    %COL4: fills the fourth column with num of trials before reward
+    firstReward = find(trials(blockDuration, 5) == 1, 1);
     %Adds the instance of the first reward over the course of each block to
     %the matrix
     %Shay - added a conditional statement to handle the case where there
@@ -113,13 +107,13 @@ for i = 1:numBlocks
     if isempty(firstReward)
         blockStats(i,4) = nan;
     else
-        blockStats(i,4) = firstReward;
+        blockStats(i,4) = firstReward-1;
     end
     
     
     %COL5: fills the fourth column with the num of incorrect trials after
     %the first reward
-    durationPostFirst = (blockBegins + firstReward + 1):blockEnds;
+    durationPostFirst = (blockBegins + firstReward):blockEnds;
     accuracyMatrixPostFirst = (blockID(durationPostFirst) == trials(durationPostFirst,2));
     incorrectTrialsPostFirst = sum(accuracyMatrixPostFirst == 0);
     %%incorrectTrialsPostFirst = sum(trials(durationPostFirst,4) == 0);

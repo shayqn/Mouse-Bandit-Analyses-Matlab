@@ -14,9 +14,9 @@
 NumSims = 1000;
 iti = 1;
 rewardWindow = 3;
-numPokes = length(timePoked);
-sessionTime = timePoked(end);
-blockSize = 10;
+numPokes = size(pokeHistory,2);
+sessionTime = etime(datevec(pokeHistory(end).timeStamp),datevec(pokeHistory(1).timeStamp));
+blockSize = 50;
 
 %% simulation
 simrewardNums = zeros(1,NumSims);
@@ -35,9 +35,9 @@ legend('simulated # of rewards');
 hold on
 
 %% add the real reward to the histogram
-realrewardNum = sum(rewards);
+realrewardNum = sum(stats.rewards.left) + sum(stats.rewards.right);
 realrewardLine = line([realrewardNum realrewardNum],[0 max(histcounts(simrewardNums))],'Color',[1 0 1],'LineWidth',4);
 
 %% calculate z-score
 
-z = myzscore(realrewardNum,simrewardNums)
+z = myzscore(realrewardNum,simrewardNums);

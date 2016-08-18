@@ -69,10 +69,10 @@ for currFolder = 1:numFiles
                 for i = 1:size(matFiles,1)
                     load(matFiles(i).name);
                 end
-                if exist('trials') == 0
-                    %extracts from the stats and pokeHistory
-                    trials = extractTrials(stats,pokeHistory);
-                end
+                %extracts from the stats and pokeHistory
+                % calc regardless of whether trials has been saved since it
+                % was modified and I don't want to take any chances. 
+                trials = extractTrials(stats,pokeHistory);
                 %calculates the blockStats of the trials
                 blockStats = calcBlockStats(trials);
                 %calculates the sessionStats of the blockStats

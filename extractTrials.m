@@ -67,13 +67,13 @@ trials(:,2) = righttrials' + (lefttrials.*2)';
 allTrialPokes = pokeHistory(allTrialIndices);
 
 for i = 1:numTrials
-    trials(i,4) = allTrialPokes(i).rightPortStats.prob;
-    trials(i,5) = allTrialPokes(i).leftPortStats.prob;
+    trials(i,3) = allTrialPokes(i).rightPortStats.prob;
+    trials(i,4) = allTrialPokes(i).leftPortStats.prob;
 end
 
 %finally, the rewards:
 leftrewards = stats.rewards.left(leftTrialIndices);
 rightrewards = stats.rewards.right(rightTrialIndices);
 
-trials(righttrials,3) = rightrewards;
-trials(lefttrials,3) = leftrewards;
+trials(righttrials,5) = rightrewards;
+trials(lefttrials,5) = leftrewards;
